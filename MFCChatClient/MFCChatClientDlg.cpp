@@ -158,5 +158,5 @@ HCURSOR CMFCChatClientDlg::OnQueryDragIcon()
 
 void CMFCChatClientDlg::OnBnClickedConnectBtn()
 {
-	TRACE("[ChatClient1]Connect Btn11");
+	TRACE("[ChatClient1]Connect Btn11333");
 }
