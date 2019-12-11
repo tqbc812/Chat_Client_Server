@@ -7,6 +7,7 @@
 #include "MFCChatClient.h"
 #include "MFCChatClientDlg.h"
 #include "afxdialogex.h"
+//#include "atlbase.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -158,5 +159,16 @@ HCURSOR CMFCChatClientDlg::OnQueryDragIcon()
 
 void CMFCChatClientDlg::OnBnClickedConnectBtn()
 {
-	TRACE("[ChatClient1]Connect Btn11");
+	TRACE("##OnBnClickedConnectBtn");
+	CString strPort, strIp;
+	GetDlgItem(IDC_PORT_EDIT)->GetWindowText(strPort);
+	GetDlgItem(IDC_IPADDRESS)->GetWindowText(strIp);
+
+	//CString 转 char *
+	USES_CONVERSION;
+	LPCSTR szPort = (LPCSTR)T2A(strPort);
+	LPCSTR szIp = (LPCSTR)T2A(strIp);
+	TRACE("szPort=%s,szIp=%s", szPort, szIp);
+	
+
 }
