@@ -1,9 +1,5 @@
-﻿
-// MFCChatClientDlg.h: 头文件
-//
-
-#pragma once
-
+﻿#pragma once
+#include "CMySocket.h"
 
 // CMFCChatClientDlg 对话框
 class CMFCChatClientDlg : public CDialogEx
@@ -33,5 +29,11 @@ protected:
 	DECLARE_MESSAGE_MAP();
 public:
 	void OnBnClickedConnectBtn();
+
+	afx_msg void OnBnClickedDisconnectBtn();
+	CMySocket* m_client;
+	CListBox m_list;
+	CTime m_tm;
+	CEdit m_input;
 };
 

@@ -7,7 +7,7 @@
 #include "MFCChatClient.h"
 #include "MFCChatClientDlg.h"
 #include "afxdialogex.h"
-//#include "atlbase.h"
+#include "atlbase.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -60,6 +60,8 @@ CMFCChatClientDlg::CMFCChatClientDlg(CWnd* pParent /*=nullptr*/)
 void CMFCChatClientDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_LIST1, m_list);
+	DDX_Control(pDX, IDC_SENDMSG_EDIT, m_input);
 }
 
 BEGIN_MESSAGE_MAP(CMFCChatClientDlg, CDialogEx)
@@ -67,6 +69,7 @@ BEGIN_MESSAGE_MAP(CMFCChatClientDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_CONNECT_BTN, &CMFCChatClientDlg::OnBnClickedConnectBtn)
+	ON_BN_CLICKED(IDC_DISCONNECT_BTN, &CMFCChatClientDlg::OnBnClickedDisconnectBtn)
 END_MESSAGE_MAP()
 
 
@@ -102,7 +105,8 @@ BOOL CMFCChatClientDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
-
+	GetDlgItem(IDC_PORT_EDIT)->SetWindowText(_T("5000"));
+	GetDlgItem(IDC_IPADDRESS)->SetWindowText(_T("127.0.0.1"));
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -169,6 +173,29 @@ void CMFCChatClientDlg::OnBnClickedConnectBtn()
 	LPCSTR szPort = (LPCSTR)T2A(strPort);
 	LPCSTR szIp = (LPCSTR)T2A(strIp);
 	TRACE("szPort=%s,szIp=%s", szPort, szIp);
-	
 
+	int iPort = _ttoi(strPort);
+
+	//创建一个socket对象
+	m_client = new CMySocket;
+
+	//创建套接字
+	if (!m_client->Create())
+	{
+		TRACE("m_client Create error=%d", GetLastError());
+		return;
+	}
+
+	//连接
+	if (!m_client->Connect(strIp, iPort))
+	{
+		TRACE("m_client Connect error=%d", GetLastError());
+		return;
+	}
+}
+
+
+void CMFCChatClientDlg::OnBnClickedDisconnectBtn()
+{
+	// TODO: 在此添加控件通知处理程序代码
 }
