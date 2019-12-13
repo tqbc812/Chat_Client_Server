@@ -70,6 +70,7 @@ BEGIN_MESSAGE_MAP(CMFCChatClientDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_CONNECT_BTN, &CMFCChatClientDlg::OnBnClickedConnectBtn)
 	ON_BN_CLICKED(IDC_DISCONNECT_BTN, &CMFCChatClientDlg::OnBnClickedDisconnectBtn)
+	ON_BN_CLICKED(IDC_SEND_BTN, &CMFCChatClientDlg::OnBnClickedSendBtn)
 END_MESSAGE_MAP()
 
 
@@ -159,7 +160,20 @@ HCURSOR CMFCChatClientDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+CString CMFCChatClientDlg::CatShowString(CString strInfo, CString strMsg)
+{
+	//时间+信息（昵称）+消息
+	CString strTime;
+	CTime tmNow;
+	tmNow =CTime::GetCurrentTime();
+	strTime = tmNow.Format("%X ");
+	CString strShow;
+	strShow = strTime + strShow;
+	strShow += strInfo;
+	strShow += strMsg;
+	return strShow;
 
+}
 
 void CMFCChatClientDlg::OnBnClickedConnectBtn()
 {
@@ -187,7 +201,8 @@ void CMFCChatClientDlg::OnBnClickedConnectBtn()
 	}
 
 	//连接
-	if (!m_client->Connect(strIp, iPort))
+	//(由于，如果函数成功，则为非零值;否则为0。所以不能用“！”）
+	if (m_client->Connect(strIp, iPort) != SOCKET_ERROR)
 	{
 		TRACE("m_client Connect error=%d", GetLastError());
 		return;
@@ -198,4 +213,28 @@ void CMFCChatClientDlg::OnBnClickedConnectBtn()
 void CMFCChatClientDlg::OnBnClickedDisconnectBtn()
 {
 	// TODO: 在此添加控件通知处理程序代码
+}
+
+
+void CMFCChatClientDlg::OnBnClickedSendBtn()
+{
+	//1,获取编辑框内容
+	CString strTmpMsg;
+	GetDlgItem(IDC_SENDMSG_EDIT)->GetWindowText(strTmpMsg);
+
+	USES_CONVERSION;
+	char* szSendBuf = T2A(strTmpMsg);
+
+	//2,发送给服务端
+	m_client->Send(szSendBuf, SEND_MAX_BUF, 0);
+
+	//3,显示到列表框
+	CString strShow;
+	CString strInfo = _T("我: ");
+	strShow=CatShowString(strInfo, strTmpMsg);
+	m_list.AddString(strShow);
+	UpdateData(false);
+
+	//清空编辑框
+	GetDlgItem(IDC_SENDMSG_EDIT)->SetWindowTextW(_T(""));
 }
